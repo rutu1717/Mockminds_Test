@@ -19,6 +19,7 @@ model User {
   name      String
   password  String
   createdAt DateTime  @default(now())
+  projects  Project[]
 }
 
 model Project {
