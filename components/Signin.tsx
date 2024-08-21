@@ -1,18 +1,18 @@
-"use client"
-import Image from "next/image"
-import Link from "next/link"
+"use client";
+import Image from "next/image";
+import Link from "next/link";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import loginimage from "../app/images/loginImage.jpg"
-import{signIn} from 'next-auth/react'
-import { useState } from "react"
-import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import loginimage from "../app/images/loginImage.jpg";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Signin() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -24,14 +24,13 @@ export default function Signin() {
         password: password,
         redirect: false,
       });
-
-      if (result!=null) {
-        router.push('/signin'); // Redirect to sign-in page or dashboard
+      if (result?.error) {
+        setError(result.error);
       } else {
-        setError("Error signing in");
+        router.push("/");
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      setError("An error occurred. Please try again.");
     }
   };
   return (
@@ -44,43 +43,53 @@ export default function Signin() {
               Enter your email below to login to your account
             </p>
           </div>
-          <form onSubmit={handleSignin} >
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
-                <Link
-                  href="/forgot-password"
-                  className="ml-auto inline-block text-sm underline"
-                >
-                  Forgot your password?
-                </Link>
+
+          {error && (
+            <div className="text-red-600 text-center mb-4">{error}</div>
+          )}
+
+          <form onSubmit={handleSignin}>
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
               </div>
-              <Input 
-              id="password" 
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)} 
-              required />
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password">Password</Label>
+                  <Link
+                    href="/forgot-password"
+                    className="ml-auto inline-block text-sm underline"
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full">
+                Login
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={async () => await signIn("google")}
+              >
+                Login with Google
+              </Button>
             </div>
-            <Button type="submit" className="w-full">
-              Login
-            </Button>
-            <Button variant="outline" className="w-full" onClick={async ()=>await signIn("google")}>
-              Login with Google
-            </Button>
-          </div>
           </form>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
@@ -100,5 +109,5 @@ export default function Signin() {
         />
       </div>
     </div>
-  )
+  );
 }
