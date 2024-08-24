@@ -1,13 +1,13 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import loginimage from "../app/images/loginImage.jpg";
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Signin() {
@@ -15,7 +15,12 @@ export default function Signin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-
+  useEffect(()=>{
+    if(error){
+      toast.error(error);
+      setError(null);
+    }
+  },[error])
   const handleSignin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -27,6 +32,9 @@ export default function Signin() {
       if (result?.error) {
         setError(result.error);
       } else {
+        toast.success("Login Successful",{
+          duration: 2000,
+        });
         router.push("/");
       }
     } catch (err) {
@@ -43,11 +51,6 @@ export default function Signin() {
               Enter your email below to login to your account
             </p>
           </div>
-
-          {error && (
-            <div className="text-red-600 text-center mb-4">{error}</div>
-          )}
-
           <form onSubmit={handleSignin}>
             <div className="grid gap-4">
               <div className="grid gap-2">
