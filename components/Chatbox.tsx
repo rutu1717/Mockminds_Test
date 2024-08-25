@@ -27,9 +27,10 @@ export default function Chat() {
   };
   useEffect(newChat,[]);
   return (
+    <>
+    <Button className="ml-8 absolute" onClick={newChat}>+ new chat</Button>  
     <div className="flex-grow overflow-y-auto custom-scrollbar h-[calc(100vh-200px)]">
-      <Button className="ml-8" onClick={newChat}>new chat</Button>
-    <div className=" mx-auto w-full max-w-xl pb-24 flex flex-col text-white">
+    <div className="mx-auto w-full max-w-xl pb-24 flex flex-col text-white">
       <div>
         {messages.length > 0
           ? messages.map((m) => (
@@ -66,5 +67,6 @@ export default function Chat() {
       </form>
     </div>
     </div>
+    </>
   );
 }
