@@ -1,19 +1,20 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { signup } from '@/actions/user';
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { signup } from "@/actions/user";
 
 export default function Signup() {
   const [firstName, setFirstName] = useState('');
@@ -37,12 +38,13 @@ export default function Signup() {
       });
 
       if (result.success) {
-        router.push('/signin'); // Redirect to sign-in page or dashboard
+        toast.success("Signup Successful");
+        router.push("/signin");
       } else {
         setError(result.message);
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      setError("An error occurred. Please try again.");
     }
   };
 
@@ -120,7 +122,7 @@ export default function Signup() {
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            Already have an account?{' '}
+            Already have an account?{" "}
             <Link href="/signin" className="underline">
               Sign in
             </Link>
