@@ -1,9 +1,9 @@
-import { PrismaClient } from "@prisma/client";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { compare } from "bcrypt";
+import client from "@/db"
 
-const prisma = new PrismaClient();
+const prisma = client;
 
 export const NEXT_AUTH_CONFIG = {
   providers: [

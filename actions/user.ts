@@ -1,8 +1,8 @@
 "use server"
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs'
+import client from "@/db"
 
-const prisma = new PrismaClient();
+const prisma = client;
 
 interface SignupParams {
   firstName: string;

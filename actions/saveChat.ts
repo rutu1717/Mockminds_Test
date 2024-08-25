@@ -1,7 +1,7 @@
 "use server"
-import { PrismaClient } from '@prisma/client';
+import client from "@/db"
 
-const prisma = new PrismaClient();
+const prisma = client;
 
 interface ChatParams {
   chatid: string;
