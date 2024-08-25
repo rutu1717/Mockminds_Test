@@ -18,6 +18,7 @@ import { signup } from '@/actions/user';
 export default function Signup() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +31,7 @@ export default function Signup() {
       const result = await signup({
         firstName,
         lastName,
+        username,
         email,
         password,
       });
@@ -76,6 +78,17 @@ export default function Signup() {
                   required
                 />
               </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                type="username"
+                placeholder="maxi143"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>

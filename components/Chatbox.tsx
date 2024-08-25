@@ -1,12 +1,14 @@
 "use client";
+import { v4 as uuidv4 } from 'uuid';
 
 import { useChat } from "ai/react";
 import { useRef, useEffect } from "react";
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
+  const { messages, input, handleInputChange, handleSubmit,setMessages} = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null); // Specify the type as HTMLDivElement
 
+  
   // Automatically scroll to the bottom when a new message is added
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -14,8 +16,19 @@ export default function Chat() {
     }
   }, [messages]);
 
+
+  const newChat = () => {
+    setMessages(prevMessages => {
+        // Create a new array with the new message as the first element
+        prevMessages=[{id:"1",content:"", role:"system", data:uuidv4()}];
+        // Return the updated messages array
+        return prevMessages;
+    });
+  };
+  useEffect(newChat,[]);
   return (
     <div className="flex-grow overflow-y-auto custom-scrollbar h-[calc(100vh-200px)]">
+      <div className="text-muted-foreground hover:text-white" onClick={newChat}>new chat</div>
     <div className=" mx-auto w-full max-w-xl pb-24 flex flex-col text-white">
       <div>
         {messages.length > 0
@@ -28,12 +41,13 @@ export default function Chat() {
                       : "text-muted-foreground justify-start"
                   } `}
                 >
+                {m.content && (
                   <div className={`${
-                    m.role === "user"
-                      ? "bg-muted p-2 px-4"
-                      : ""
-                  } `}>{m.content}
+                    m.role === "user" ? "bg-muted p-2 px-4" : ""
+                  }`}>
+                    {m.content}
                   </div>
+                )}
                 </div>
                 <br></br>
               </div>
