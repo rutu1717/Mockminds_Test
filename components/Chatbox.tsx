@@ -1,6 +1,6 @@
 "use client";
 import { v4 as uuidv4 } from 'uuid';
-
+import { Button } from './ui/button';
 import { useChat } from "ai/react";
 import { useRef, useEffect } from "react";
 
@@ -28,7 +28,7 @@ export default function Chat() {
   useEffect(newChat,[]);
   return (
     <div className="flex-grow overflow-y-auto custom-scrollbar h-[calc(100vh-200px)]">
-      <div className="text-muted-foreground hover:text-white" onClick={newChat}>new chat</div>
+      <Button className="ml-8" onClick={newChat}>new chat</Button>
     <div className=" mx-auto w-full max-w-xl pb-24 flex flex-col text-white">
       <div>
         {messages.length > 0
