@@ -62,7 +62,6 @@ export const NEXT_AUTH_CONFIG = {
             data: {
               email: user.email,
               name: user.name,
-              username:"",
               password: '', // Set an empty password for Google-authenticated users
             },
           });

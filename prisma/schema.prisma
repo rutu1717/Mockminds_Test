@@ -18,7 +18,6 @@ model User {
   userId    String    @unique @default(cuid()) 
   email     String    @unique 
   name      String 
-  username  String    @unique 
   image     String? 
   gender    String? 
   password  String 
