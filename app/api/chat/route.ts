@@ -10,6 +10,7 @@ async function getUser() {
 }
 const groq = createGroq({
   baseURL: 'https://api.groq.com/openai/v1',
+  temperature: 5,
   apiKey: process.env.GROQ_API_KEY,
 });
 
@@ -33,7 +34,6 @@ export async function POST(req: Request) {
 			- Respond in plain text without formatting, as if speaking in a real interview setting.
    			- don't ask long questions try to ask like real questions, concise questions and short in length ,less text `,
     messages: messages,
-    temperature: 5,
     onFinish:async()=>{
       const success=await saveChat({chatid:messages[0].data,userId:user.userId,messages:messages});
       console.log(success)
