@@ -30,7 +30,8 @@ export async function POST(req: Request) {
 			- Include at least one question about modern JavaScript features (ES6+).
 			- Ask a coding question that requires problem-solving skills.
 			- Evaluate the candidate's communication skills and ability to explain technical concepts.
-			- Respond in plain text without formatting, as if speaking in a real interview setting.`,
+			- Respond in plain text without formatting, as if speaking in a real interview setting.
+   			- don't ask long questions try to ask likr real questions concise `,
     messages: messages,
     onFinish:async()=>{
       const success=await saveChat({chatid:messages[0].data,userId:user.userId,messages:messages});
