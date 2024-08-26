@@ -1,8 +1,8 @@
 "use server"
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs'
+import client from "@/db"
 
-const prisma = new PrismaClient();
+const prisma = client;
 
 interface SignupParams {
   firstName: string;
@@ -11,7 +11,7 @@ interface SignupParams {
   password: string;
 }
 
-export async function signup({ firstName, lastName, email, password }: SignupParams) {
+export async function signup({ firstName, lastName,email, password }: SignupParams) {
   try {
     // Check if the email is already in use
     const existingUser = await prisma.user.findUnique({

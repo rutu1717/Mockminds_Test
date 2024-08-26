@@ -1,9 +1,9 @@
-import { PrismaClient } from "@prisma/client";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { compare } from "bcrypt";
+import client from "@/db"
 
-const prisma = new PrismaClient();
+const prisma = client;
 
 export const NEXT_AUTH_CONFIG = {
   providers: [
@@ -62,7 +62,7 @@ export const NEXT_AUTH_CONFIG = {
             data: {
               email: user.email,
               name: user.name,
-              password: "", // Set an empty password for Google-authenticated users
+              password: '', // Set an empty password for Google-authenticated users
             },
           });
           user.userId = newUser.userId;

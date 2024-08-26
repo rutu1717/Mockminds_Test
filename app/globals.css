@@ -5,6 +5,9 @@
 
 
 .custom-scrollbar::-webkit-scrollbar {
+  width: 12px; /* Adjust width to make it slim */
+}
+.custom-scrollbar::-webkit-scrollbar:hover {
   width: 16px; /* Adjust width to make it slim */
 }
 
