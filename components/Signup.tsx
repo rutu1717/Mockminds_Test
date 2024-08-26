@@ -34,12 +34,11 @@ export default function Signup() {
         email,
         password,
       });
-
       if (result.success) {
         toast.success("Signup Successful");
         router.push("/signin");
       } else {
-        setError(result.message);
+        toast.error(result.message);
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
