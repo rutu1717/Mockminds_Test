@@ -13,7 +13,8 @@ import {
 
 export const Appbar = () => {
   return (
-    <div className="flex justify-end bg-background p-8">
+    <div className="flex justify-between bg-background p-8">
+      <div className="text-3xl font-medium">mockminds</div>
       <DropdownMenu>
         <DropdownMenuTrigger className="focus:outline-none">
           <Avatar>
