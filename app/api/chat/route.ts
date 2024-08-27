@@ -33,7 +33,7 @@ export async function POST(req: Request) {
 			- Ask a coding question that requires problem-solving skills.
 			- Evaluate the candidate's communication skills and ability to explain technical concepts.
 			- Respond in plain text without formatting, as if speaking in a real interview setting.
-   			- don't ask long questions try to ask like real questions, concise questions and short in length ,less text `,
+   		- don't ask long questions try to ask like real questions, concise questions and short in length ,less text `,
     messages: messages,
     temperature: 0.7,
     onFinish:async()=>{

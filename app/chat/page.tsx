@@ -1,5 +1,5 @@
 import { Appbar } from "@/components/Appbar";
-import Success from "@/components/success";
+import Chatbox from "@/components/Chatbox";
 import { NEXT_AUTH_CONFIG } from "@/lib/auth";
 import { getServerSession } from "next-auth"
 import { redirect } from 'next/navigation';
@@ -9,7 +9,7 @@ async function getUser() {
   return session;
 }
 
-export default async function Home() {
+export default async function Chat() {
   const session = await getUser();
   if (session==null) {
     redirect('/signin');
@@ -17,8 +17,7 @@ export default async function Home() {
   return (
     <div>
       <Appbar />
-      {/* {JSON.stringify(session)} */}
-      <Success/>
+      <Chatbox/>
     </div>
   );
 }

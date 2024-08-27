@@ -3,11 +3,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { Button } from './ui/button';
 import { useChat } from "ai/react";
 import { useRef, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit,setMessages} = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null); // Specify the type as HTMLDivElement
 
+  const router = useRouter();
+  const handleRedirect = () => {
+    router.push('/');
+  };
   
   // Automatically scroll to the bottom when a new message is added
   useEffect(() => {
@@ -25,10 +30,13 @@ export default function Chat() {
         return prevMessages;
     });
   };
+
+
+
   useEffect(newChat,[]);
   return (
     <>
-    <Button className="ml-8 absolute" onClick={newChat}>+ new chat</Button>  
+    <Button className="ml-8 absolute bg-red-500" onClick={handleRedirect}>end interview</Button>  
     <div className="flex-grow overflow-y-auto custom-scrollbar h-[calc(100vh-200px)]">
     <div className="mx-auto w-full max-w-xl pb-24 flex flex-col text-white">
       <div>
