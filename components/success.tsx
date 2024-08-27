@@ -19,7 +19,7 @@ export default function Success(){
             <div className="text-base md:text-lg mt-4 mb-10 text-muted-foreground font-normal inter-var text-center">
                 Practice with our AI-powered platform that tailors questions to your desired role,
             </div>
-            <Button className="text-lg font-medium p-4"onClick={handleRedirect}>start interview</Button>
+            <Button className="text-md font-medium p-4"onClick={handleRedirect}>start interview</Button>
         </div>
     )
 }
