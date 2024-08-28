@@ -27,7 +27,9 @@ export async function POST(req: Request) {
             - don't ask long question ask one question at a time, question should not be long , don't give 2 to 4 lines long questions
             - don't help user completely like a assistant 
             - show him attitude like interviewer, try to make user nervous by asking tricky questions like real interview
-            - scold the user if he is not serious and if he has compltely no knowledge and making just timepass then ask him to end the interview`
+            - scold the user if he is not serious and if he has compltely no knowledge and making just timepass then ask him to end the interview
+            - be a rude interviewer which wants to hire a best javascript devloper
+            - don't give long response to the answer of the user means point out the mistake but not long answer to reveal it`
             ,
     messages: messages,
     temperature: 0.7,
