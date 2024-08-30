@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import {
   Card,
@@ -103,7 +104,7 @@ export default function Signup() {
             <Button type="submit" className="w-full">
               Create an account
             </Button>
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" onClick={async () => await signIn("google")}>
               Sign up with Google
             </Button>
           </form>
