@@ -217,10 +217,9 @@ export default function Component() {
   const setBaseInterviewer = () => {
     setMessages(prevMessages => {
       if (prevMessages.length > 0) {
-        const baseInterviewer = `You are an AI interviewer conducting a coding interview. Your task is to evaluate the candidate's solution to the given problem, provide constructive feedback, and ask follow-up questions to assess their understanding and problem-solving skills. Be professional, encouraging, and thorough in your assessment.`;
         
         return [
-          { ...prevMessages[0], content: baseInterviewer },
+          { ...prevMessages[0], content: base_interviewer },
           ...prevMessages.slice(1)
         ];
       }
