@@ -27,10 +27,9 @@ export default function Chat() {
         return prevMessages;
     });
   };
-
-
-
   useEffect(newChat,[]);
+
+
   return (
     <>
     <AlertDial><Button className="ml-8 absolute bg-red-700 z-10 hover:bg-red-700 hover:text-white">end interview</Button></AlertDial>  
@@ -64,7 +63,7 @@ export default function Chat() {
               </h1>
             </div>
       )}
-        <div ref={messagesEndRef} />
+      <div ref={messagesEndRef} />
       </div>
       <form onSubmit={handleSubmit} className="flex-shrink-0">
         <input
