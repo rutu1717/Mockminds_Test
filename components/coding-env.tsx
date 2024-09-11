@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 import MarkdownPreview from '@uiw/react-markdown-preview';
 
 
+
 export default function Component() {
   const [mode, setMode] = useState('code')
   const [language, setLanguage] = useState('javascript')
@@ -47,7 +48,38 @@ export default function Component() {
     - Assessing problem-solving skills, technical proficiency, code quality, and the ability to handle edge cases.
     - Avoiding explicit hints about complexity or edge cases to ensure the candidate demonstrates their ability to infer and handle these on their own.
   `
-  const instructPrompt=`Create a coding problem. Difficulty: medium. Topic: tree.`
+  const topics = [
+    "Arrays",
+    "Strings",
+    "Linked Lists",
+    "Hash Tables",
+    "Dynamic Programming",
+    "Trees",
+    "Graphs",
+    "Sorting Algorithms",
+    "Binary Search",
+    "Recursion",
+    "Greedy Algorithms",
+    "Stack",
+    "Queue",
+    "Heaps",
+    "Depth-First Search (DFS)",
+    "Breadth-First Search (BFS)",
+    "Backtracking",
+    "Bit Manipulation",
+    "Binary Search Trees",
+    "Tries",
+  ];
+  
+  const generateProblem = (type="coding", difficulty="medium", requirements="") => {
+    const randomTopic = topics[Math.floor(Math.random() * topics.length)];
+    const instructPrompt = `Create a ${type} problem. Difficulty: ${difficulty}. Topic: ${randomTopic}. Additional requirements: ${requirements}.`;
+    append({
+      id: uuidv4(),
+      content: base_problem_generation + instructPrompt,
+      role: 'system'
+    });
+  };
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -136,13 +168,6 @@ export default function Component() {
     }
   }, [language]);
 
-  const generateProblem=() => {
-    append({
-      id:"-1",
-      content: base_problem_generation+instructPrompt,
-      role: 'system'
-    })
-  }
   const newChat = () => {
     setMessages(prevMessages => {
         // Create a new array with the new message as the first element
@@ -150,7 +175,7 @@ export default function Component() {
         // Return the updated messages array
         return prevMessages;
     });
-    generateProblem();
+    generateProblem('coding', 'medium', '');
   };
 
 
