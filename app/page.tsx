@@ -14,6 +14,7 @@ export default async function Home() {
   if (session==null) {
     redirect('/signin');
   }
+
   return (
     <div>
       <Appbar />
