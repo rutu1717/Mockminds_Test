@@ -75,7 +75,7 @@ export default function Component() {
     const randomTopic = topics[Math.floor(Math.random() * topics.length)];
     const instructPrompt = `Create a ${type} problem. Difficulty: ${difficulty}. Topic: ${randomTopic}. Additional requirements: ${requirements}.`;
     append({
-      id: uuidv4(),
+      id: "-1",
       content: base_problem_generation + instructPrompt,
       role: 'system'
     });
