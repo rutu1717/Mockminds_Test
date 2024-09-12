@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { DM_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/sonner";
-const sanserif = DM_Sans({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], display: "swap"});
 
 export const metadata: Metadata = {
   title: "mockminds",
@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={sanserif.className}>
+      <body className={inter.className}>
         <Providers>
           {children}
         </Providers>
