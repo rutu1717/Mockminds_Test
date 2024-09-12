@@ -64,3 +64,15 @@
     @apply bg-background text-foreground;
   }
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap&subset=latin');
+
+/* From Public Directory */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter.ttf');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0000-007F; /* Basic Latin */
+}
