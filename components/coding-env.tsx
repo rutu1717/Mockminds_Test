@@ -115,8 +115,8 @@ export default function Component() {
     "Tries",
   ];
   
-  const generateProblem = (type="coding", difficulty="medium", requirements="") => {
-    const randomTopic = topics[Math.floor(Math.random() * topics.length)];
+  const generateProblem = async (type="coding", difficulty="medium", requirements="") => {
+    const randomTopic =await  topics[Math.floor(Math.random() * topics.length)];
     const instructPrompt = `Create a ${type} problem. Difficulty: ${difficulty}. Topic: ${randomTopic}. Additional requirements: ${requirements}.`;
     append({
       id: "-1",
