@@ -97,9 +97,9 @@ export default function InterviewDialog({ item }:{
             />
           </div>
         </div>
-        <DialogFooter className="mt-4">
+        <DialogFooter className="mt-4 font-md">
           <Button onClick={handleRedirect}>
-            Start Interview
+            start interview
           </Button>
         </DialogFooter>
       </DialogContent>
