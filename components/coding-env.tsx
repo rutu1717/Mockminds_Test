@@ -248,20 +248,20 @@ export default function Component() {
       <Appbar/>
 
       {/* Main content */}
-      <div className="flex-1 pb-4 flex space-x-10 overflow-hidden mx-20">
+      <div className="flex-1 pb-4 flex space-x-10 overflow-hidden mx-10">
         {/* Problem Statement Area */}
-        <Card className="w-1/2 overflow-hidden bg-card border-muted ">
+        <Card className="w-2/5 overflow-hidden bg-background border-muted ">
           <CardContent className="p-0 h-full">
             <div className="h-full overflow-y-auto p-4">
               <div className="prose prose-invert">
-              <MarkdownPreview source={messages.length > 2 ? messages[2].content : 'Loading...'} style={{ backgroundColor: "#09090b" }} />
+              <MarkdownPreview source={messages.length > 2 ? messages[2].content : 'Loading...'} style={{ backgroundColor: "#09090b",fontSize: '0.95rem'}} />
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Coding Area */}
-        <Card className="w-1/2 overflow-hidden bg-card border-muted">
+        <Card className="w-3/5 overflow-hidden bg-background border-muted">
           <CardContent className="p-0 h-full flex flex-col">
             <div className="p-4 border-b border-border flex justify-between items-center">
               <div className="flex items-center space-x-2">
@@ -402,6 +402,12 @@ export default function Component() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* New Button Bar */}
+      <div className="flex justify-end p-1 px-6 bg-background">
+        <button className="mx-4 my-2 px-3 pt-1 pb-2 rounded-lg text-center bg-white font-medium text-black hover:bg-gray-300">restart</button>
+        <button className="mx-4 my-2 px-3 pt-1 pb-2 rounded-lg text-center bg-white font-medium text-black hover:bg-gray-300">submit</button>
       </div>
     </div>
   )

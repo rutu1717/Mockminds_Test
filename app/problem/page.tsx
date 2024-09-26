@@ -1,5 +1,3 @@
-import { Appbar } from "@/components/Appbar";
-import Chatbox from "@/components/Chatbox";
 import Component from "@/components/coding-env";
 import { NEXT_AUTH_CONFIG } from "@/lib/auth";
 import { getServerSession } from "next-auth"

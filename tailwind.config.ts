@@ -55,6 +55,7 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        bottomBar: "#141414", // Added bottomBar color
       },
       borderRadius: {
         lg: "var(--radius)",
