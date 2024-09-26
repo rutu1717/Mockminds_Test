@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     system:messages[0].content,
     messages: messages,
     temperature: 0.7,
-    maxTokens: 10000,
+    maxTokens: 7100,
     onFinish:async()=>{
       const success=await saveChat({chatid:messages[0].data,userId:user.userId,messages:messages});
       console.log(success)
