@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     model: groq('llama-3.1-70b-versatile'),
     system:messages[0].content,
     messages: messages,
-    temperature: 1,
+    temperature: 0.7,
     onFinish:async()=>{
       const success=await saveChat({chatid:messages[0].data,userId:user.userId,messages:messages});
       console.log(success)
