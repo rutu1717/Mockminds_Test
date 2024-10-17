@@ -27,12 +27,11 @@ export default function Component() {
   const inputRef = useRef<HTMLInputElement>(null)
   const [codeContent, setCodeContent] = useState<{ [key: string]: string }>({})
   const [textContent, setTextContent] = useState('')
-
+  const [CodingQuestion , setCodingQuestion] = useState('');
   const languages = ['javascript', 'python', 'java', 'cpp', 'sql', 'typescript']
 
   const { messages, input, handleInputChange, handleSubmit,setMessages,append} = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null); // Specify the type as HTMLDivElement
-
   const base_problem_generation = `
     You are an AI acting as an interviewer for a big-tech company, tasked with generating a clear, well-structured problem statement. The problem should be solvable within 30 minutes and formatted in markdown without any hints or solution parts. Ensure the problem:
     - Is reviewed by multiple experienced interviewers for clarity, relevance, and accuracy.
@@ -124,6 +123,8 @@ export default function Component() {
       role: 'system'
     });
   };
+ 
+ 
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -226,7 +227,7 @@ export default function Component() {
       return prevMessages;
     });
   };
-
+ 
   const initializeInterview = async () => {
     await new Promise(resolve => {
       setMessages(prevMessages => {
@@ -235,13 +236,26 @@ export default function Component() {
         return prevMessages;
       });
     });
+    if(!CodingQuestion){
     await generateProblem('coding', 'medium', '');
+    }
     setBaseInterviewer();
   };
-
   useEffect(() => {
-    initializeInterview();
+    const storedQuestion = sessionStorage.getItem('CodingQuestion');
+    if (storedQuestion) {
+      setCodingQuestion(storedQuestion);
+    } else {
+      initializeInterview();
+    }
   }, []);
+  useEffect(()=>{
+    if(messages.length > 2 && messages[2].content && messages[1].id == '-1'){
+      sessionStorage.setItem('CodingQuestion',messages[2].content);
+      setCodingQuestion(messages[2].content);
+    }
+  },[messages])
+ 
 
   return (
     <div className="flex flex-col h-screen bg-background text-white">
@@ -254,7 +268,7 @@ export default function Component() {
           <CardContent className="p-0 h-full">
             <div className="h-full overflow-y-auto p-4">
               <div className="prose prose-invert">
-              <MarkdownPreview source={messages.length > 2 ? messages[2].content : 'Loading...'} style={{ backgroundColor: "#09090b",fontSize: '0.95rem'}} />
+              <MarkdownPreview source={CodingQuestion ? CodingQuestion : 'Loading...'} style={{ backgroundColor: "#09090b",fontSize: '0.95rem'}} />
               </div>
             </div>
           </CardContent>
@@ -357,7 +371,7 @@ export default function Component() {
                     </Button>
                   </div>
                   <div className="px-4 overflow-y-auto" style={{ maxHeight: 'calc(75vh - 160px)' }}>
-                      {messages.length > 3
+                      {messages.length > 0
                                 && messages.map((m) => (
                                     <div key={m.id} className="mb-4">
                                       {m.content && m.id !== "-1" && messages.indexOf(m) !== 2 && (<div
@@ -367,7 +381,6 @@ export default function Component() {
                                             : "text-muted-foreground justify-start"
                                         } `}
                                       >
-                                      
                                         <div className={`${
                                           m.role === "user" ? "bg-muted p-2 px-4" : ""
                                         }`}>
