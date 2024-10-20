@@ -46,12 +46,15 @@ export async function POST(req: Request) {
   const { messages} = await req.json();
   const {user} = await getUser();
   const result = await streamText({
-    model: groq('mixtral-8x7b-32768'),
+    model: groq('llama3-8b-8192'),
     system:messages[0].content,
     messages: messages,
     temperature: 1,
     maxTokens:7100,
-    onFinish:async()=>{
+    onFinish:async(result: any)=>{
+      console.log(messages[1])
+      console.log(result.text)
+      messages.push({  role: "system",content: result.text })
       const success=await saveChat({chatid:messages[0].data,userId:user.userId,messages:messages});
       console.log(success)
     }
