@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useRouter } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -16,7 +17,6 @@ import { Pen, Eraser, Send, X } from "lucide-react";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 import { Appbar } from "./Appbar";
 import { useChat } from "ai/react";
-import { v4 as uuidv4 } from "uuid";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import { useSearchParams } from "next/navigation";
 export default function Component() {
@@ -33,6 +33,7 @@ export default function Component() {
   const [codeContent, setCodeContent] = useState<{ [key: string]: string }>({});
   const [textContent, setTextContent] = useState("");
   const [CodingQuestion, setCodingQuestion] = useState("");
+  const router=useRouter()
   const languages = [
     "javascript",
     "python",
@@ -287,8 +288,9 @@ export default function Component() {
         setMessages(chatHistory);
       }
     } else {
-      await generateProblem("coding", "medium", "");
+        router.push('/')
     }
+    await generateProblem("coding", "medium", "");
     setBaseInterviewer();
 };
 
