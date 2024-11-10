@@ -18,7 +18,7 @@ import { Appbar } from "./Appbar";
 import { useChat } from "ai/react";
 import { v4 as uuidv4 } from "uuid";
 import MarkdownPreview from "@uiw/react-markdown-preview";
-
+import { useSearchParams } from "next/navigation";
 export default function Component() {
   const [mode, setMode] = useState("code");
   const [chatId, setChatId] = useState("");
@@ -134,11 +134,20 @@ export default function Component() {
   const fetchChatHistory = async (id: string | null) => {
     try {
       const response = await fetch(`/api/chat?chatId=${id}`);
-
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          return null; // Return null for new chats
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       setMessages(data);
+      return data; // Return the data for existing chats
     } catch (error) {
       console.error("Error fetching chat history:", error);
+      return null;
     }
   };
   const generateProblem = async (
@@ -146,6 +155,12 @@ export default function Component() {
     difficulty = "medium",
     requirements = ""
   ) => {
+    setMessages((prevMessages) => {
+      prevMessages = [
+        { id: "-1", content: "", role: "system", data: id },
+      ];
+      return prevMessages;
+    });
     const randomTopic = await topics[Math.floor(Math.random() * topics.length)];
     const instructPrompt = `Create a ${type} problem. Difficulty: ${difficulty}. Topic: ${randomTopic}. Additional requirements: ${requirements}.`;
     append({
@@ -260,47 +275,29 @@ export default function Component() {
       return prevMessages;
     });
   };
-
+  const searchParams=useSearchParams();
+  const id=searchParams.get("id")
   const initializeInterview = async () => {
-    let storedChatId = sessionStorage.getItem("chatId");
-    if (!storedChatId) {
-      storedChatId = uuidv4();
-      sessionStorage.setItem("chatId", storedChatId);
-      await new Promise((resolve) => {
-        setMessages((prevMessages) => {
-          prevMessages = [
-            { id: "-1", content: "", role: "system", data: storedChatId },
-          ];
-          resolve(null);
-          return prevMessages;
-        });
-      });
-    }
-    setChatId(storedChatId);
-    if (!CodingQuestion) {
+    if (id) {
+      setChatId(id);
+      const chatHistory = await fetchChatHistory(id);
+      if (!chatHistory) {
+        await generateProblem("coding", "medium", "");
+      } else {
+        setMessages(chatHistory);
+      }
+    } else {
       await generateProblem("coding", "medium", "");
     }
     setBaseInterviewer();
-  };
-  const getChatHistory = async (storedChatId: string | null) => {
-    await fetchChatHistory(storedChatId);
-  };
+};
+
   useEffect(() => {
-    const storedQuestion = sessionStorage.getItem("CodingQuestion");
-    if (storedQuestion) {
-      
-      let storedChatId = sessionStorage.getItem("chatId");
-      if(storedChatId){
-      getChatHistory(storedChatId);
-      }
-      setCodingQuestion(storedQuestion);
-    } else {
-      initializeInterview();
-    }
+    initializeInterview();
   }, []);
+
   useEffect(() => {
-    if (messages.length > 2 && messages[2].content && messages[1].id == "-1") {
-      sessionStorage.setItem("CodingQuestion", messages[2].content);
+    if (messages.length > 2 && messages[2]?.content) {
       setCodingQuestion(messages[2].content);
     }
   }, [messages]);

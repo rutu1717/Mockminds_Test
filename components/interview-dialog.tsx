@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { useRouter } from 'next/navigation';
+import { v4 as uuidv4 } from "uuid";
 
 export default function InterviewDialog({ item }:{
   item: {
@@ -25,7 +26,7 @@ export default function InterviewDialog({ item }:{
   const [requirements, setRequirements] = useState('')
   const router = useRouter();
   const handleRedirect = () => {
-    router.push('/problem');
+    router.push(`/problem?id=${uuidv4()}`);
   };
   return (
     <Dialog>

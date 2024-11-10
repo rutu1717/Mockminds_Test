@@ -30,7 +30,7 @@ export async function GET(req: Request) {
     });
 
     if (!chat) {
-      return NextResponse.json({ error: 'Chat not found' }, { status: 404 });
+      return NextResponse.json(null, { status: 200 });
     }
 
     return NextResponse.json(chat.messages, { status: 200 });
@@ -52,9 +52,9 @@ export async function POST(req: Request) {
     temperature: 1,
     maxTokens:7100,
     onFinish:async(result: any)=>{
-      console.log(messages[1])
-      console.log(result.text)
       messages.push({  role: "system",content: result.text })
+      console.log(messages[0].data)
+      console.log(messages[2].content)
       const success=await saveChat({chatid:messages[0].data,userId:user.userId,messages:messages});
       console.log(success)
     }
