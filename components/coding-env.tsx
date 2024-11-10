@@ -290,7 +290,6 @@ export default function Component() {
     } else {
         router.push('/')
     }
-    await generateProblem("coding", "medium", "");
     setBaseInterviewer();
 };
 
