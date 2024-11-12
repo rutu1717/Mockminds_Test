@@ -158,7 +158,7 @@ export default function Component() {
   ) => {
     setMessages((prevMessages) => {
       prevMessages = [
-        { id: "-1", content: "", role: "system", data: id },
+        { id: "-1", content: base_interviewer, role: "system", data: id },
       ];
       return prevMessages;
     });
@@ -167,7 +167,7 @@ export default function Component() {
     append({
       id: "-1",
       content: base_problem_generation + instructPrompt,
-      role: "system",
+      role: "system"
     });
   };
 
@@ -265,17 +265,6 @@ export default function Component() {
     }
   }, [language]);
 
-  const setBaseInterviewer = () => {
-    setMessages((prevMessages) => {
-      if (prevMessages.length > 0) {
-        return [
-          { ...prevMessages[0], content: base_interviewer },
-          ...prevMessages.slice(1),
-        ];
-      }
-      return prevMessages;
-    });
-  };
   const searchParams=useSearchParams();
   const id=searchParams.get("id")
   const initializeInterview = async () => {
@@ -290,7 +279,6 @@ export default function Component() {
     } else {
         router.push('/')
     }
-    setBaseInterviewer();
 };
 
   useEffect(() => {

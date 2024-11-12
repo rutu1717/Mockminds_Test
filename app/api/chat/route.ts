@@ -43,11 +43,13 @@ export async function GET(req: Request) {
   }
 }
 export async function POST(req: Request) {
-  console.log("req")
   const { messages} = await req.json();
+  if (messages.length <= 3) {
+    messages[0].content = "";
+  }
   const {user} = await getUser();
   const result = await streamText({
-    model: groq('llama3-8b-8192'),
+    model: groq('mixtral-8x7b-32768'),
     system:messages[0].content,
     messages: messages,
     temperature: 1,
