@@ -9,6 +9,9 @@ import { NextResponse } from "next/server";
 import { log } from "console";
 import { json } from "stream/consumers";
 const messageTimestamps = new Map(); 
+type Message = {
+  content: string;
+};
 const feedbackSchema = z.object({
   rating: z.object({
     technical: z.number().min(1).max(5).describe("Technical skill rating from 1 to 5."),
@@ -51,6 +54,7 @@ const groq = createGroq({
   baseURL: "https://api.groq.com/openai/v1",
   apiKey: process.env.GROQ_API_KEY,
 });
+const sessionDuration = 80000;
 const base_grading_feedback = `
 As an AI grader, provide detailed, critical feedback on the candidate's performance by:
 - Say if candidate provided any working solution or not in the beginning of your feedback.
@@ -102,8 +106,9 @@ export async function GET(req: Request) {
 }
 export async function POST(req: Request) {
   const { messages} = await req.json();
+  messageTimestamps.set(messages.length-1,Date.now());
   let maxTokens=40;
-  if (messages.length <= 3) {
+  if (messages.length <= 3 || isSessionEnded(sessionDuration)) {
     messages[0].content = "";
     maxTokens=7100
   }
@@ -125,11 +130,10 @@ export async function POST(req: Request) {
         messages: messages,
       });
 
-      const sessionDuration = 80000;
 
       if (isSessionEnded(sessionDuration)) {
         console.log("Session ended.");
-        const sampleMessages = messages.map(msg => msg.content).join("\n");
+        const sampleMessages = messages.map((msg: Message) => msg.content).join("\n");
         // const feedbackPrompt = `
         //   Based on the following chat session,including a rating, comments, and improvement suggestions:
         //   Chat Summary:
