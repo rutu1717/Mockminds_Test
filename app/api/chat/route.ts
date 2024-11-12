@@ -44,8 +44,10 @@ export async function GET(req: Request) {
 }
 export async function POST(req: Request) {
   const { messages} = await req.json();
+  let maxTokens=40;
   if (messages.length <= 3) {
     messages[0].content = "";
+    maxTokens=7100
   }
   const {user} = await getUser();
   const result = await streamText({
@@ -53,7 +55,7 @@ export async function POST(req: Request) {
     system:messages[0].content,
     messages: messages,
     temperature: 1,
-    maxTokens:7100,
+    maxTokens:maxTokens,
     onFinish:async(result: any)=>{
       messages.push({  role: "system",content: result.text })
       const success=await saveChat({chatid:messages[0].data,userId:user.userId,messages:messages});

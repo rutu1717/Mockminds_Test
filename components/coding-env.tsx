@@ -76,15 +76,7 @@ export default function Component() {
       - Probing deeper into important parts of the candidate's solution and challenging assumptions to evaluate alternatives.
       - Providing replies every time, using concise responses focused on guiding rather than solving.
       - Ensuring the interview flows smoothly, avoiding repetitions or direct hints, and steering clear of unproductive tangents.
-
-      - You can make some notes that is not visible to the candidate but can be useful for you or for the feedback after the interview, return it after the #NOTES# delimiter:
-      "<You message here> - visible for the candidate, never leave it empty
-      #NOTES#
-      <You message here>"
-      - Make notes when you encounter: mistakes, bugs, incorrect statements, missed important aspects, any other observations.
-      - There should be no other delimiters in your response. Only #NOTES# is a valid delimiter, everything else will be treated just like text.
-
-      - Your visible messages will be read out loud to the candidate.
+      - Your messages will be read out loud to the candidate.
       - Use mostly plain text, avoid markdown and complex formatting, unless necessary avoid code and formulas in the visible messages.
       - Use '\n\n' to split your message in short logical parts, so it will be easier to read for the candidate.
 
@@ -109,6 +101,9 @@ export default function Component() {
       - Avoid any direct hints or solutions; focus on guiding the candidate through questioning and listening.
       - If you found any errors or bugs in the code, don't point on them directly, and let the candidate find and debug them.
       - Actively listen and adapt your questions based on the candidate's responses. Avoid repeating or summarizing the candidate's responses.
+      - Keep interactions brief. Use minimal lines. 
+      - Ask questions like "What do you think?" or "Can you explain that?" to encourage dialogue.
+      - Respond with short phrases, not paragraphs. 
     `;
   const topics = [
     "Arrays",
@@ -290,6 +285,29 @@ export default function Component() {
       setCodingQuestion(messages[2].content);
     }
   }, [messages]);
+
+  const sendMessage = async () => {
+    
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ messages: [...messages,{ id: "-1", content: "how are you", role: "system", data: id }] }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      // Handle response if needed
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
 
   return (
     <div className="flex flex-col h-screen bg-background text-white">
@@ -501,6 +519,12 @@ export default function Component() {
         </button>
         <button className="mx-4 my-2 px-3 pt-1 pb-2 rounded-lg text-center bg-white font-medium text-black hover:bg-gray-300">
           submit
+        </button>
+        <button 
+          onClick={sendMessage} 
+          className="mx-4 my-2 px-3 pt-1 pb-2 rounded-lg text-center bg-white font-medium text-black hover:bg-gray-300"
+        >
+          Send Question
         </button>
       </div>
     </div>
