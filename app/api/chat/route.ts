@@ -142,7 +142,7 @@ export async function POST(req: Request) {
 
         try {
           const feedback = await generateObject({
-            model: groq("llama3-8b-8192"),
+            model: groq("llama-3.3-70b-versatile"),
             schema: feedbackSchema,
             prompt: base_grading_feedback + `\n\nChat Summary:\n${sampleMessages}`,
           });
