@@ -28,7 +28,7 @@ function isSessionEnded(duration: number): boolean {
     console.log("Not enough messages to check session.");
     return false;
   }
-  
+
   // Get the timestamps of the third and last messages
   console.log(Array.from(messageTimestamps.entries()));
   const firstMessageTime = messageTimestamps.get(2);
@@ -107,6 +107,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const { messages} = await req.json();
   messageTimestamps.set(messages.length-1,Date.now());
+  console.log(messages[0].content)
   let maxTokens=40;
   if (messages.length <= 3 || isSessionEnded(sessionDuration)) {
     messages[0].content = "";
@@ -114,7 +115,7 @@ export async function POST(req: Request) {
   }
   const {user} = await getUser();
   const result = await streamText({
-    model: groq("mixtral-8x7b-32768"),
+    model: groq("llama-3.3-70b-specdec"),
     system: messages[0].content,
     messages: messages,
     temperature: 1,
@@ -129,8 +130,6 @@ export async function POST(req: Request) {
         userId: user.userId,
         messages: messages,
       });
-
-
       if (isSessionEnded(sessionDuration)) {
         console.log("Session ended.");
         const sampleMessages = messages.map((msg: Message) => msg.content).join("\n");

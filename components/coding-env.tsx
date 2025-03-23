@@ -127,6 +127,9 @@ export default function Component() {
     "Binary Search Trees",
     "Tries",
   ];
+  // useEffect(()=>{
+  //   const savedEndTime = sessionStorage.getItem()
+  // },[])
   const fetchChatHistory = async (id: string | null) => {
     try {
       const response = await fetch(`/api/chat?chatId=${id}`);

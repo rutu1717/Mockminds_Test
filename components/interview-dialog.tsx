@@ -22,11 +22,16 @@ export default function InterviewDialog({ item }:{
     description: string;
   }
 }) {
-  const [difficulty, setDifficulty] = useState('medium')
-  const [requirements, setRequirements] = useState('')
+  const [difficulty, setDifficulty] = useState('medium');
+  const [requirements, setRequirements] = useState('');
+  const [agentname,setAgentname] = useState(item.name);
+  const [agentDescription,setAgentDescription] = useState(item.description);
   const router = useRouter();
   const handleRedirect = () => {
-    router.push(`/problem?id=${uuidv4()}`);
+    let interview_details = {'agentName':agentname,'agentDescription':agentDescription,'difficulty':difficulty,'requirements':requirements};
+    sessionStorage.setItem('interview_details',JSON.stringify(interview_details));
+    console.log(interview_details);
+    router.push(`/chat?id=${uuidv4()}`);
   };
   return (
     <Dialog>

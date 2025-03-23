@@ -1,5 +1,6 @@
 "use client"
 import { Button } from "./ui/button"
+import { v4 as uuidv4} from 'uuid';
 import { useRouter } from 'next/navigation';
 import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
 
@@ -41,7 +42,8 @@ const testimonials = [
 export default function Success(){
     const router = useRouter();
     const handleRedirect = () => {
-        router.push('/chat');
+        const uniqueId = uuidv4();
+        router.push(`/chat?id=${uniqueId}`);
       };
     return (
         <div className="flex flex-col justify-center items-start ml-10 flex-grow overflow-y-auto h-[calc(85vh)]">
