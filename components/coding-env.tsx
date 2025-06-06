@@ -5,6 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
+
+import {base_problem_generation, base_interviewer, topics} from "@/lib/prompts"
+
 import {
   Select,
   SelectContent,
@@ -19,6 +23,7 @@ import { Appbar } from "./Appbar";
 import { useChat } from "ai/react";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import { useSearchParams } from "next/navigation";
+import { log } from "console";
 export default function Component() {
   const [mode, setMode] = useState("code");
   const [chatId, setChatId] = useState("");
@@ -33,6 +38,7 @@ export default function Component() {
   const [codeContent, setCodeContent] = useState<{ [key: string]: string }>({});
   const [textContent, setTextContent] = useState("");
   const [CodingQuestion, setCodingQuestion] = useState("");
+  const problemRef = useRef<string>("");
   const router=useRouter()
   const languages = [
     "javascript",
@@ -51,82 +57,10 @@ export default function Component() {
     append,
   } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null); // Specify the type as HTMLDivElement
-  const base_problem_generation = `
-    You are an AI acting as an interviewer for a big-tech company, tasked with generating a clear, well-structured problem statement. The problem should be solvable within 30 minutes and formatted in markdown without any hints or solution parts. Ensure the problem:
-    - Is reviewed by multiple experienced interviewers for clarity, relevance, and accuracy.
-    - Includes necessary constraints and examples to aid understanding without leading to a specific solution.
-    - Don't provide any detailed requirements or constraints or anything that can lead to the solution, let candidate ask about them.
-    - Allows for responses in text or speech form only; do not expect diagrams or charts.
-    - Maintains an open-ended nature if necessary to encourage candidate exploration.
-    - Do not include any hints or parts of the solution in the problem statement.
-    - Provide necessary constraints and examples to aid understanding without leading the candidate toward any specific solution.
-    - Return only the problem statement in markdown format; refrain from adding any extraneous comments or annotations that are not directly related to the problem itself.
-    The type of interview you are generating a problem for is a coding interview. Focus on:
-    - Testing the candidate's ability to solve real-world coding, algorithmic, and data structure challenges efficiently.
-    - Assessing problem-solving skills, technical proficiency, code quality, and the ability to handle edge cases.
-    - Avoiding explicit hints about complexity or edge cases to ensure the candidate demonstrates their ability to infer and handle these on their own.
-  `;
 
-  const base_interviewer = `
-      You are an AI conducting an interview. Your role is to manage the interview effectively by:
-      - Understanding the candidate’s intent, especially when using voice recognition which may introduce errors.
-      - Asking follow-up questions to clarify any doubts without leading the candidate.
-      - Focusing on collecting and questioning about the candidate’s formulas, code, or comments.
-      - Avoiding assistance in problem-solving; maintain a professional demeanor that encourages independent candidate exploration.
-      - Probing deeper into important parts of the candidate's solution and challenging assumptions to evaluate alternatives.
-      - Providing replies every time, using concise responses focused on guiding rather than solving.
-      - Ensuring the interview flows smoothly, avoiding repetitions or direct hints, and steering clear of unproductive tangents.
-      - Your messages will be read out loud to the candidate.
-      - Use mostly plain text, avoid markdown and complex formatting, unless necessary avoid code and formulas in the visible messages.
-      - Use '\n\n' to split your message in short logical parts, so it will be easier to read for the candidate.
 
-      - You should direct the interview strictly rather than helping the candidate solve the problem.
-      - Be very concise in your responses. Allow the candidate to lead the discussion, ensuring they speak more than you do.
-      - Never repeat, rephrase, or summarize candidate responses. Never provide feedback during the interview.
-      - Never repeat your questions or ask the same question in a different way if the candidate already answered it.
-      - Never give away the solution or any part of it. Never give direct hints or part of the correct answer.
-      - Never assume anything the candidate has not explicitly stated.
-      - When appropriate, challenge the candidate's assumptions or solutions, forcing them to evaluate alternatives and trade-offs.
-      - Try to dig deeper into the most important parts of the candidate's solution by asking questions about different parts of the solution.
-      - Make sure the candidate explored all areas of the problem and provides a comprehensive solution. If not, ask about the missing parts.
-      - If the candidate asks appropriate questions about data not mentioned in the problem statement (e.g., scale of the service, time/latency requirements, nature of the problem, etc.), you can make reasonable assumptions and provide this information.
-      You are conducting a coding interview. Ensure to:
-      - Initially ask the candidate to propose a solution in a theoretical manner before coding.
-      - Probe their problem-solving approach, choice of algorithms, and handling of edge cases and potential errors.
-      - Allow them to code after discussing their initial approach, observing their coding practices and solution structuring.
-      - Guide candidates subtly if they deviate or get stuck, without giving away solutions.
-      - After coding, discuss the time and space complexity of their solutions.
-      - Encourage them to walk through test cases, including edge cases.
-      - Ask how they would adapt their solution if problem parameters changed.
-      - Avoid any direct hints or solutions; focus on guiding the candidate through questioning and listening.
-      - If you found any errors or bugs in the code, don't point on them directly, and let the candidate find and debug them.
-      - Actively listen and adapt your questions based on the candidate's responses. Avoid repeating or summarizing the candidate's responses.
-      - Keep interactions brief. Use minimal lines. 
-      - Ask questions like "What do you think?" or "Can you explain that?" to encourage dialogue.
-      - Respond with short phrases, not paragraphs. 
-    `;
-  const topics = [
-    "Arrays",
-    "Strings",
-    "Linked Lists",
-    "Hash Tables",
-    "Dynamic Programming",
-    "Trees",
-    "Graphs",
-    "Sorting Algorithms",
-    "Binary Search",
-    "Recursion",
-    "Greedy Algorithms",
-    "Stack",
-    "Queue",
-    "Heaps",
-    "Depth-First Search (DFS)",
-    "Breadth-First Search (BFS)",
-    "Backtracking",
-    "Bit Manipulation",
-    "Binary Search Trees",
-    "Tries",
-  ];
+
+
   // useEffect(()=>{
   //   const savedEndTime = sessionStorage.getItem()
   // },[])
@@ -142,33 +76,52 @@ export default function Component() {
       }
       
       const data = await response.json();
-      setMessages(data);
       return data; // Return the data for existing chats
     } catch (error) {
       console.error("Error fetching chat history:", error);
       return null;
     }
   };
+
+
   const generateProblem = async (
     type = "coding",
     difficulty = "medium",
     requirements = ""
   ) => {
-    setMessages((prevMessages) => {
-      prevMessages = [
-        { id: "-1", content: base_interviewer, role: "system", data: id },
-      ];
-      return prevMessages;
-    });
-    const randomTopic = await topics[Math.floor(Math.random() * topics.length)];
+    const randomTopic = topics[Math.floor(Math.random() * topics.length)];
     const instructPrompt = `Create a ${type} problem. Difficulty: ${difficulty}. Topic: ${randomTopic}. Additional requirements: ${requirements}.`;
-    append({
-      id: "-1",
-      content: base_problem_generation + instructPrompt,
-      role: "system"
-    });
+    
+    try {
+      const response = await fetch('/api/problem', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          topic: instructPrompt,
+          base_prompt: base_problem_generation
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate problem');
+      }
+
+      const data = await response.json();
+      if (!data.problem) {
+        throw new Error('No problem generated');
+      }
+
+      return data.problem;
+    } catch (error) {
+      console.error('Error generating problem:', error);
+      return 'Failed to generate problem. Please try again.';
+    }
   };
 
+  
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -269,25 +222,38 @@ export default function Component() {
     if (id) {
       setChatId(id);
       const chatHistory = await fetchChatHistory(id);
-      if (!chatHistory) {
-        await generateProblem("coding", "medium", "");
-      } else {
-        setMessages(chatHistory);
+      if (chatHistory) {
+        if (chatHistory.length===chatHistory[1].data) {
+          console.log('chat-end detected');
+          const problem = await generateProblem("coding", "medium", "");
+          const updatedMessages = [
+            ...chatHistory,
+            { id: "-1", content: problem, role: "system"},
+            {id:"-1",content:base_interviewer, role:"system"}
+          ];
+          setMessages(updatedMessages);
+          setCodingQuestion(problem);
+          append( { id: "-1", content: "start coding round by introducing", role: "system" })
+        } else {
+          setMessages(chatHistory);
+          // Set coding question using the index stored in messages[1].data
+          if (chatHistory.length > chatHistory[1].data) {
+            setCodingQuestion(chatHistory[chatHistory[1].data].content);
+          }
+        }
       }
     } else {
-        router.push('/')
+      router.push('/');
     }
-};
+  };
 
   useEffect(() => {
-    initializeInterview();
+    const init = async () => {
+      await initializeInterview();
+    };
+    init();
   }, []);
 
-  useEffect(() => {
-    if (messages.length > 2 && messages[2]?.content) {
-      setCodingQuestion(messages[2].content);
-    }
-  }, [messages]);
 
   const sendMessage = async () => {
     
@@ -306,7 +272,6 @@ export default function Component() {
 
       // Handle response if needed
       const data = await response.json();
-      console.log(data);
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -465,9 +430,9 @@ export default function Component() {
                     style={{ maxHeight: "calc(75vh - 160px)" }}
                   >
                     {messages.length > 3 &&
-                      messages.slice(3).map((m) => (
+                      messages.map((m) => (
                         <div key={m.id} className="mb-4">
-                          {m.content && m.id !== "-1" && messages.indexOf(m)!==2 && m.content!=CodingQuestion && (
+                          {m.content && m.role !== "system" && (
                             <div
                               className={`flex ${
                                 m.role === "user"

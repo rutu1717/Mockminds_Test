@@ -2,13 +2,11 @@
 import { v4 as uuidv4 } from "uuid";
 import { Button } from "./ui/button";
 import { useChat } from "ai/react";
-import { useParams, useSearchParams } from "next/navigation";
+import {useSearchParams } from "next/navigation";
 import { useRef, useEffect, useState } from "react";
 import AlertDial from "./alert";
-import { NavigationOff } from "lucide-react";
-import { start } from "repl";
 import { useRouter } from "next/navigation";
-import { time } from "console";
+
 type InterviewDetails = {
   agentName: string;
   agentDescription: string;
@@ -17,53 +15,55 @@ type InterviewDetails = {
 };
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit, setMessages } =
+  const { messages, input, handleInputChange, handleSubmit, setMessages,append } =
     useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null); // Specify the type as HTMLDivElement
   const videoRef = useRef<HTMLVideoElement>(null);
   const searchParams = useSearchParams();
   const interviewId = searchParams.get("id");
   const router = useRouter();
-  const interviewTime = 10 * 60 * 1000;
+  const interviewTime = 1 * 60 * 1000;
   const [interviewDetails, setInterviewDetails] = useState<InterviewDetails | null>(null);;
   const [timeRemaining, setTimeRemaining] = useState(interviewTime); // 30 minutes in milliseconds
+
+
   const generateInterviewPrompt = (interviewDetails: InterviewDetails): string => {
     return `
-      You are ${interviewDetails.agentName}, ${interviewDetails.agentDescription}. 
-      You are acting as a technical interviewer for a big-tech company, conducting a structured interview for a candidate.
-    
+      You are ${interviewDetails.agentName}, ${interviewDetails.agentDescription}.     
       Your role:
-        - Conduct a professional and engaging coding interview.
-        - Maintain a conversational yet structured approach, ensuring the candidate feels comfortable while being assessed.
-        - Ask one question at a time and wait for the candidate’s response before proceeding.
-        - Adjust follow-up questions based on the candidate’s answers to test depth of knowledge.
-        - Keep questions relevant to the candidate's expertise level and the technologies mentioned in your description.
-    
-      Interview Structure:
-        1. **Introduction**:
-           - Greet the candidate and introduce yourself as ${interviewDetails.agentName}.
-           - Briefly explain the interview process and expectations.
-        2. **Technical Questions**:
-           - Ask well-structured coding questions related to the technologies you specialize in.
-           - Cover relevant coding principles and real-world application.
-           - Keep the difficulty level at **${interviewDetails.difficulty}**, as specified.
-        3. **Follow-ups & Clarifications**:
-           - If the candidate struggles, provide minimal clarification but avoid giving direct hints.
-           - Ask deeper questions to assess problem-solving skills and practical knowledge.
-        4. **Behavioral & System Design (Optional)**:
-           - If relevant, ask about experience with architecture, handling state management, debugging techniques, or best practices.
-        5. **Closing**:
-           - Summarize the interview and ask the candidate if they have any final thoughts or questions.
-    
-      Important Guidelines:
+        - Greet the candidate and introduce yourself as ${interviewDetails.agentName}.
+        - Keep the difficulty level at **${interviewDetails.difficulty}**, as specified.
         - Stay in character as **${interviewDetails.agentName}** throughout the interview.
-        - Keep the conversation fluid and adaptive, ensuring a natural interview experience.
-        - Do not provide hints or answers unless the candidate explicitly asks for guidance.
-        - Avoid generic or overly theoretical questions—focus on real-world coding challenges.
     
       Begin the interview by introducing yourself as **${interviewDetails.agentName}** and asking the first question.
+      You are an AI conducting an interview. Your role is to manage the interview effectively by:
+        - Understanding the candidate’s intent, especially when using voice recognition which may introduce errors.
+        - Asking follow-up questions to clarify any doubts without leading the candidate.
+        - Focusing on collecting and questioning about the candidate’s formulas, code, or comments.
+        - Avoiding assistance in problem-solving; maintain a professional demeanor that encourages independent candidate exploration.
+        - Probing deeper into important parts of the candidate's solution and challenging assumptions to evaluate alternatives.
+        - Providing replies every time, using concise responses focused on guiding rather than solving.
+        - Ensuring the interview flows smoothly, avoiding repetitions or direct hints, and steering clear of unproductive tangents.
+        - There should be no other delimiters in your response.
+
+        - Your visible messages will be read out loud to the candidate like it is converted into audio to feel like voice to voice conversation so keep in mind response length accordingly.
+        - Use mostly plain text, avoid markdown and complex formatting, unless necessary avoid code and formulas in the visible messages.
+        - Use '\n\n' to split your message in short logical parts, so it will be easier to read for the candidate.
+
+        - You should direct the interview strictly rather than helping the candidate solve the problem.
+        - Be very concise in your responses. Allow the candidate to lead the discussion, ensuring they speak more than you do.
+        - Never repeat, rephrase, or summarize candidate responses. Never provide feedback during the interview.
+        - Never repeat your questions or ask the same question in a different way if the candidate already answered it.
+        - Never give away the solution or any part of it. Never give direct hints or part of the correct answer.
+        - Never assume anything the candidate has not explicitly stated.
+        - When appropriate, challenge the candidate's assumptions or solutions, forcing them to evaluate alternatives and trade-offs.
+        - Try to dig deeper into the most important parts of the candidate's solution by asking questions about different parts of the solution.
+        - Make sure the candidate explored all areas of the problem and provides a comprehensive solution. If not, ask about the missing parts.
+        - If the candidate asks appropriate questions about data not mentioned in the problem statement (e.g., scale of the service, time/latency requirements, nature of the problem, etc.), you can make reasonable assumptions and provide this information.
     `;
   };
+
+
   useEffect(() => {
     const details = sessionStorage.getItem("interview_details");
     if(details) {
@@ -81,12 +81,14 @@ export default function Chat() {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+
   useEffect(() => {
     const savedTime = sessionStorage.getItem("endTime");
     if (!savedTime) {
       initializeTimer();
     }
   }, []);
+
   const initializeTimer = () => {
     const currentTime = Date.now();
     const endTime = currentTime + interviewTime;
@@ -97,11 +99,12 @@ export default function Chat() {
       const endTime = sessionStorage.getItem("endTime");
       const remainingTime = Math.max(0, Number(endTime) - Date.now());
       setTimeRemaining(remainingTime);
-      // if (remainingTime <= 570000) {
-      //   console.log("Redirecting to problems page");
-      //   router.push(`/problem?id=${interviewId}`);
-      //   clearInterval(interval); // Stop further redirections
-      // }
+      if (remainingTime <=0) {
+        console.log("Redirecting to problems page");
+        append( { data: "chat-end", content: "", role: "assistant" })
+        router.push(`/problem?id=${interviewId}`);
+        clearInterval(interval); // Stop further redirections
+      }
       if (remainingTime <= 0) {
         clearInterval(interval);
       }
@@ -143,6 +146,7 @@ export default function Chat() {
     });
   };
 }
+// is this needed interview details in dependency array?
   useEffect(newChat, [interviewDetails]);
 
   return (
@@ -171,7 +175,7 @@ export default function Chat() {
               {messages.length > 1 ? (
                 messages.map((m) => (
                   <div key={m.id} className="mb-4">
-                    {m.content  && (
+                    {m.content && m.role !== "system"  && (
                       <div
                         className={`flex ${
                           m.role === "user"

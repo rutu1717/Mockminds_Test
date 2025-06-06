@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/mistral": "^1.2.8",
     "@ai-sdk/openai": "^0.0.46",
     "@nanostores/react": "github:ai/react",
     "@prisma/client": "^5.18.0",
