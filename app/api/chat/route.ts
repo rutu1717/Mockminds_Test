@@ -1,11 +1,11 @@
 import { streamText} from "ai";
-// import { createOpenAI as createGroq } from "@ai-sdk/openai";
+import { createOpenAI as createGroq } from "@ai-sdk/openai";
 import { saveChat } from "@/actions/saveChat";
 import { getServerSession } from "next-auth";
 import { NEXT_AUTH_CONFIG } from "@/lib/auth";
 import prisma from "@/db";
 import { NextResponse } from "next/server";
-import { mistral } from '@ai-sdk/mistral'
+// import { createMistral } from '@ai-sdk/mistral';
 
 
 async function getUser() {
@@ -17,12 +17,16 @@ function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
-// const groq = createGroq({
-//   baseURL: "https://api.groq.com/openai/v1",
-//   apiKey: process.env.GROQ_API_KEY,
+const groq = createGroq({
+  baseURL: "https://api.groq.com/openai/v1",
+  apiKey: process.env.GROQ_API_KEY,
+});
+
+// const mistral = createMistral({
+//   apiKey: process.env.MISTRAL_API_KEY,
 // });
 
-const model = mistral('mistral-large-latest')
+const model = groq('meta-llama/llama-4-scout-17b-16e-instruct')
 
 export async function GET(req: Request) {
   try {
@@ -75,7 +79,7 @@ export async function POST(req: Request) {
   }
 
   const result = await streamText({
-    model: model as any, // Type assertion to bypass type mismatch
+    model: model, // Type assertion to bypass type mismatch
     system: messages[0].content,
     messages: messages,
     temperature: 1,
